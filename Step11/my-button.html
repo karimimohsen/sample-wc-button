@@ -63,7 +63,6 @@
                 shadowRoot.appendChild(clone);
                 this._uppercase = false;
             }
-
             connectedCallback() {
                 this.addEventListener('click', this._onClick.bind(this));
             }
@@ -79,12 +78,11 @@
                 if (window[fn] instanceof Function) {
                     window[fn](event);
                 }
-            } attributeChangedCallback(name, oldValue, newValue) {
+            } 
+            attributeChangedCallback(name, oldValue, newValue) {
                 this.uppercase = newValue === '' || newValue === 'true';
             }
-
             get uppercase() { return this._uppercase; }
-
             set uppercase(value) {
                 this._uppercase = Boolean(value);
                 const el = this.shadowRoot.querySelector("div");
