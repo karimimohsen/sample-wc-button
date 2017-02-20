@@ -72,7 +72,7 @@
                     detail: { value: this._uppercase }
                 });
                 this.dispatchEvent(event);
-
+                
                 // DO NOT DO THIS IN PRODUCTION
                 const fn = this.getAttribute('on-uppercasechange');
                 if (window[fn] instanceof Function) {
