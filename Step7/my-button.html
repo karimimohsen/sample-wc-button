@@ -1,0 +1,49 @@
+<html>
+<template id="my-button-template">
+    <style>
+        :host {
+            display: block;
+        }
+        
+        div {
+            background-color: var(--button-color);
+        }
+    </style>
+    <div>
+        <slot></slot>
+    </div>
+</template>
+<script>
+    customElements.define('my-button', class extends HTMLElement {
+        constructor() {
+            super();
+            const template = document.querySelector('#my-button-template');
+            const clone = document.importNode(template.content, true);
+
+            const shadowRoot = this.attachShadow({ mode: 'open' });
+            shadowRoot.appendChild(clone);
+        }
+
+    });
+
+</script>
+<style>
+    my-button {
+        width: 50px;
+    }
+    
+    #blue {
+        --button-color: lightblue;
+    }
+    
+    #green {
+        --button-color: green;
+    }
+</style>
+
+<body>
+    <my-button id="blue">I'm blue</my-button>
+    <my-button id="green">I'm green</my-button>
+</body>
+
+</html>

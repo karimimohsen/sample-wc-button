@@ -1,0 +1,36 @@
+<html>
+<script>
+    customElements.define('my-button', class extends HTMLElement {
+        constructor() {
+            super();
+            const shadowRoot = this.attachShadow({ mode: 'open' });
+
+            const textNode = document.createTextNode("Button");
+            const divEl = document.createElement("div");
+            divEl.style.backgroundColor = "lightblue";
+            divEl.appendChild(textNode);
+
+            shadowRoot.appendChild(divEl);
+
+            const styleEl = document.createElement("style");
+            styleEl.innerHTML = `
+                :host {
+                    display: block;
+                }
+                `;
+            shadowRoot.appendChild(styleEl);
+        }
+    });
+
+</script>
+<style>
+    my-button {
+        width: 50px;
+    }
+</style>
+
+<body>
+    <my-button></my-button>
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+<template id="my-button-template">
+    <style>
+        :host {
+            display: block;
+        }
+        
+        div {
+            background-color: var(--button-color);
+        }
+        
+        .uppercase {
+            text-transform: uppercase;
+        }
+    </style>
+    <div>
+        <slot></slot>
+    </div>
+</template>
+<style>
+    my-button {
+        width: 100px;
+    }
+    
+    #blue {
+        --button-color: lightblue;
+    }
+    
+    #green {
+        --button-color: green;
+    }
+</style>
+
+<body>
+    <script>
+        function onUppercaseChange(ev) {
+            console.log(
+                `'${ev.target.innerText}' is ${!ev.detail.value ? 'not ' : ''}uppercase`
+            );
+        }
+
+        (async () => {
+            await customElements.whenDefined('my-button');
+            const greenEl = document.querySelector('#green');
+            greenEl.addEventListener('uppercasechange', onUppercaseChange);
+        })();
+    </script>
+    <my-button id="blue" uppercase on-uppercasechange="onUppercaseChange">
+        I'm Blue
+    </my-button>
+    <my-button id="green">I'm Green</my-button>
+</body>
+<script>
+        customElements.define('my-button', class extends HTMLElement {
+            static get observedAttributes() {
+                return ['uppercase'];
+            }
+            constructor() {
+                super();
+                const template = document.querySelector('#my-button-template');
+                const clone = document.importNode(template.content, true);
+
+                const shadowRoot = this.attachShadow({ mode: 'open' });
+                shadowRoot.appendChild(clone);
+                this._uppercase = false;
+            }
+
+            connectedCallback() {
+                this.addEventListener('click', this._onClick.bind(this));
+            }
+            _onClick(ev) {
+                this.uppercase = !this.uppercase;
+                const event = new CustomEvent("uppercasechange", {
+                    detail: { value: this._uppercase }
+                });
+                this.dispatchEvent(event);
+
+                // DO NOT DO THIS IN PRODUCTION
+                const fn = this.getAttribute('on-uppercasechange');
+                if (window[fn] instanceof Function) {
+                    window[fn](event);
+                }
+            } attributeChangedCallback(name, oldValue, newValue) {
+                this.uppercase = newValue === '' || newValue === 'true';
+            }
+
+            get uppercase() { return this._uppercase; }
+
+            set uppercase(value) {
+                this._uppercase = Boolean(value);
+                const el = this.shadowRoot.querySelector("div");
+                if (this._uppercase) {
+                    el.classList.add("uppercase");
+                } else {
+                    el.classList.remove("uppercase");
+                }
+            }
+        });
+
+</script>

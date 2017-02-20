@@ -1,0 +1,80 @@
+<html>
+<template id="my-button-template">
+    <style>
+        :host {
+            display: block;
+        }
+        
+        div {
+            background-color: var(--button-color);
+        }
+        
+        .uppercase {
+            text-transform: uppercase;
+        }
+    </style>
+    <div>
+        <slot></slot>
+    </div>
+</template>
+<style>
+    my-button {
+        width: 100px;
+    }
+    
+    #blue {
+        --button-color: lightblue;
+    }
+    
+    #green {
+        --button-color: green;
+    }
+</style>
+
+<body>
+    <my-button id="blue" uppercase>
+        I'm blue
+    </my-button>
+    <my-button id="green">I'm green</my-button>
+</body>
+<script>
+    customElements.define('my-button', class extends HTMLElement {
+        static get observedAttributes() {
+            return ['uppercase'];
+        }
+
+        constructor() {
+            super();
+            const template = document.querySelector('#my-button-template');
+            const clone = document.importNode(template.content, true);
+
+            const shadowRoot = this.attachShadow({ mode: 'open' });
+            shadowRoot.appendChild(clone);
+        }
+
+        attributeChangedCallback(name, oldValue, newValue) {
+            this.uppercase = newValue === '' || newValue === 'true';
+        }
+
+        connectedCallback() {
+            this.addEventListener('click', this._onClick.bind(this));
+        }
+
+        _onClick(ev) {
+            // e.g. => Hi from I'M BLUE!
+            alert(`Hi from ${this.innerText}!`);
+        }
+
+        set uppercase(value) {
+            const el = this.shadowRoot.querySelector("div");
+            if (value) {
+                el.classList.add("uppercase");
+            } else {
+                el.classList.remove("uppercase");
+            }
+        }
+    });
+
+</script>
+
+</html>
